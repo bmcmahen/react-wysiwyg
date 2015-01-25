@@ -1,0 +1,28 @@
+{
+  "name": "react-wysiwyg",
+  "version": "1.0.0",
+  "description": "enable limited interaction with a content editable element, useful for in-place, wysiwyg editing",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "react",
+    "contenteditable",
+    "textarea",
+    "forms"
+  ],
+  "peerDependencies": {
+    "react": ">=0.12.0"
+  },
+  "author": "Ben McMahen",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^8.1.1",
+    "expect.js": "^0.3.1",
+    "http-server": "^0.7.4",
+    "jquery": "^2.1.3",
+    "mocha": "^2.1.0",
+    "react": "^0.12.2",
+    "reactify": "^1.0.0",
+    "zuul": "^1.16.5"
+  }
+}
