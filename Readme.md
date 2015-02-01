@@ -4,7 +4,7 @@
 
 This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing. It comes with support for placeholders and max-length validation.
 
-I've currently tested this in Firefox, Chrome, and Safari on the desktop.
+I've currently tested this in Firefox, Chrome, Safari (desktop & mobile), and IE 11.
 
 ## Install
 

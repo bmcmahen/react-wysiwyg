@@ -1,6 +1,6 @@
 {
   "name": "react-wysiwyg",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "enable limited interaction with a content editable element, useful for in-place, wysiwyg editing",
   "main": "index.js",
   "scripts": {},
@@ -26,6 +26,6 @@
     "zuul": "^1.16.5"
   },
   "dependencies": {
-    "selection-range": "^1.0.0"
+    "selection-range": "^1.0.1"
   }
 }
