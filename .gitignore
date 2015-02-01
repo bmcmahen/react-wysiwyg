@@ -1,3 +1,4 @@
 test-bundle.js
 .DS_Store
 node_modules
+example/bundle.js
