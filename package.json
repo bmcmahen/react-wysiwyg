@@ -24,5 +24,8 @@
     "react": "^0.12.2",
     "reactify": "^1.0.0",
     "zuul": "^1.16.5"
+  },
+  "dependencies": {
+    "selection-range": "^1.0.0"
   }
 }

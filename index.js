@@ -4,6 +4,7 @@
 
 var React = require('react');
 var classSet = require('react/lib/cx');
+var selectionRange = require('selection-range');
 
 
 /**
@@ -28,36 +29,8 @@ var ContentEditable = React.createClass({
     };
   },
 
-  shouldComponentUpdate: function(nextProps, nextState) {
-    var el = this.getDOMNode();
-
-    // not editing
-    if (!nextProps.editing && el) {
-      return true;
-    }
-
-    // changing editing state
-    if (nextProps.editing != this.props.editing) {
-      return true;
-    }
-
-
-    if (el) {
-      updateEmptyStatus();
-      if (el.textContent == nextProps.text) {
-        return false;
-      }
-    }
-
-    function updateEmptyStatus(){
-      if (!el.textContent.length) {
-        el.classList.add('is-empty');
-      } else {
-        el.classList.remove('is-empty');
-      }
-    }
-
-    return true;
+  getInitalState: function(){
+    return {};
   },
 
   componentDidMount: function(){
@@ -69,6 +42,10 @@ var ContentEditable = React.createClass({
   componentDidUpdate: function(prevProps, prevState){
     if (!prevProps.editing && this.props.editing && this.props.autoFocus) {
       this.autofocus();
+    }
+
+    if (this.state && this.state.range) {
+      selectionRange(this.getDOMNode(), this.state.range);
     }
   },
 
@@ -90,7 +67,7 @@ var ContentEditable = React.createClass({
     // setup our classes
     var classes = {
       ContentEditable: true,
-      'is-empty': !this.props.text.length
+      'is-empty': !this.props.text.trim().length
     };
 
     if (className) {
@@ -102,9 +79,9 @@ var ContentEditable = React.createClass({
 
     var content;
 
-    if (!this.props.text.length && editing) {
+    if (!this.props.text.trim().length && editing) {
       content = this.props.placeholder;
-    } else if (!this.props.text.length) {
+    } else if (!this.props.text.trim().length) {
       content = React.createElement('br');
     } else {
       content = this.props.text;
@@ -125,9 +102,10 @@ var ContentEditable = React.createClass({
     }, content);
   },
 
-  setPlaceholder: function(){
-    if (!this.props.text.length) {
+  setPlaceholder: function(text){
+    if (!text.trim().length && this.props.placeholder) {
       this.getDOMNode().textContent = this.props.placeholder;
+      this.setCursorToStart();
     }
   },
 
@@ -153,15 +131,18 @@ var ContentEditable = React.createClass({
   },
 
   onKeyDown: function(e) {
+    var self = this;
+
     function prev () {
       e.preventDefault();
+      e.stopPropagation();
+      self._stop = true;
     }
 
     var key = e.key;
 
-    if (key == 'Delete' && !this.props.text.length) {
+    if (key == 'Delete' && !this.props.text.trim().length) {
       prev();
-      e.stopPropagation();
       return;
     }
 
@@ -173,7 +154,7 @@ var ContentEditable = React.createClass({
       if (e.keyCode == 73) return prev();
     }
 
-    if (!this.props.text.length) {
+    if (!this.props.text.trim().length) {
       if (key == 'Backspace') return prev();
       if (key == 'Delete') return prev();
       if (key == 'ArrowRight') return prev();
@@ -216,17 +197,25 @@ var ContentEditable = React.createClass({
   },
 
   onKeyUp: function(e) {
-    this.setPlaceholder();
+    var stop = this._stop;
+    this._stop = false;
+    
+    if (!stop && !this._ignoreKeyup) {
+      this.setText(e.target.textContent);
+    }
+
+    this.setPlaceholder(e.target.textContent);
   },
 
   onInput: function(e) {
+    this._ignoreKeyup = true;
     this.setText(e.target.textContent);
   },
 
   setText: function(val) {
-    if (this.props.onChange) {
-      this.props.onChange(val);
-    }
+    var range = selectionRange(this.getDOMNode());
+    this.setState({ range : range });
+    this.props.onChange(val);
   }
 
 });
