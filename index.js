@@ -4,7 +4,13 @@
 
 var React = require('react');
 var classSet = require('react/lib/cx');
-var selectionRange = require('selection-range');
+var isNotServer = typeof window !== 'undefined';
+
+var selectionRange;
+
+if (isNotServer) {
+  selectionRange = require('selection-range');
+}
 
 
 /**
@@ -115,12 +121,14 @@ var ContentEditable = React.createClass({
 
   setCursorToStart: function(){
     this.getDOMNode().focus();
-    var sel = window.getSelection();
-    var range = document.createRange();
-    range.setStart(this.getDOMNode(), 0);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
+    if (isNotServer) {
+      var sel = window.getSelection();
+      var range = document.createRange();
+      range.setStart(this.getDOMNode(), 0);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
   },
 
   onMouseDown: function(e) {
