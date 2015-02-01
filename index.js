@@ -200,6 +200,9 @@ var ContentEditable = React.createClass({
     var stop = this._stop;
     this._stop = false;
     
+    // This is a lame hack to support IE, which doesn't
+    // support the 'input' event on contenteditable. Definitely
+    // not ideal, but it seems to work for now.
     if (!stop && !this._ignoreKeyup) {
       this.setText(e.target.textContent);
     }
