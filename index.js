@@ -31,51 +31,52 @@ var ContentEditable = React.createClass({
   shouldComponentUpdate: function(nextProps, nextState) {
     var el = this.getDOMNode();
 
+    // not editing
     if (!nextProps.editing && el) {
-      el.textContent = nextProps.text;
-      if (!el.textContent.length) el.classList.add('is-empty');
-      else el.classList.remove('is-empty');
+      return true;
     }
 
+    // changing editing state
     if (nextProps.editing != this.props.editing) {
       return true;
     }
 
+
     if (el) {
-      if (!el.textContent.length) el.classList.add('is-empty');
-      else el.classList.remove('is-empty');
+      updateEmptyStatus();
       if (el.textContent == nextProps.text) {
         return false;
+      }
+    }
+
+    function updateEmptyStatus(){
+      if (!el.textContent.length) {
+        el.classList.add('is-empty');
+      } else {
+        el.classList.remove('is-empty');
       }
     }
 
     return true;
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    if (!this.props.editing && nextProps.editing) {
-      this.setPlaceholder({ editing : true });
-      if (this.props.autoFocus) {
-        this.autofocus();
-      }
-    }
-  },
-
   componentDidMount: function(){
-    this.setPlaceholder();
     if (this.props.editing && this.props.autoFocus) {
       this.autofocus();
     }
   },
 
+  componentDidUpdate: function(prevProps, prevState){
+    if (!prevProps.editing && this.props.editing && this.props.autoFocus) {
+      this.autofocus();
+    }
+  },
+
   autofocus: function(){
-    var sel = window.getSelection();
-    var range = document.createRange();
-    range.setStart(this.getDOMNode(), 0);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
     this.getDOMNode().focus();
+    if (!this.props.text.length) {
+      this.setCursorToStart();
+    }
   },
 
   render: function() {
@@ -99,6 +100,16 @@ var ContentEditable = React.createClass({
     // set 'div' as our default tagname
     tagName = tagName || 'div';
 
+    var content;
+
+    if (!this.props.text.length && editing) {
+      content = this.props.placeholder;
+    } else if (!this.props.text.length) {
+      content = React.createElement('br');
+    } else {
+      content = this.props.text;
+    }
+
     // return our newly created element
     return React.createElement(tagName, {
       tabIndex: this.props.autoFocus ? -1 : 0,
@@ -107,16 +118,15 @@ var ContentEditable = React.createClass({
       onKeyDown: this.onKeyDown,
       onPaste: this.onPaste,
       onMouseDown: this.onMouseDown,
+      onTouchStart: this.onMouseDown,
       onKeyPress: this.onKeyPress,
       onInput: this.onInput,
       onKeyUp: this.onKeyUp
-    }, this.props.text);
+    }, content);
   },
 
-  setPlaceholder: function(opts){
-    opts = opts || {};
-    var editing = opts.editing;
-    if (!this.props.text.length && (this.props.editing || editing)) {
+  setPlaceholder: function(){
+    if (!this.props.text.length) {
       this.getDOMNode().textContent = this.props.placeholder;
     }
   },
@@ -125,17 +135,21 @@ var ContentEditable = React.createClass({
     this.getDOMNode().textContent = '';
   },
 
-  onMouseDown: function(e) {
-    if (this.props.text.length) return;
-    // if we have a placeholder, set the cursor to the start
+  setCursorToStart: function(){
+    this.getDOMNode().focus();
     var sel = window.getSelection();
     var range = document.createRange();
     range.setStart(this.getDOMNode(), 0);
     range.collapse(true);
     sel.removeAllRanges();
     sel.addRange(range);
+  },
+
+  onMouseDown: function(e) {
+    if (this.props.text.length) return;
+    // if we have a placeholder, set the cursor to the start
+    this.setCursorToStart();
     e.preventDefault();
-    this.getDOMNode().focus();
   },
 
   onKeyDown: function(e) {
@@ -160,10 +174,13 @@ var ContentEditable = React.createClass({
     }
 
     if (!this.props.text.length) {
+      if (key == 'Backspace') return prev();
       if (key == 'Delete') return prev();
       if (key == 'ArrowRight') return prev();
       if (key == 'ArrowLeft') return prev();
       if (key == 'ArrowDown') return prev();
+      if (key == 'ArrowUp') return prev();
+      if (key == 'Tab') return prev();
       this.unsetPlaceholder();
     }
   },
@@ -172,9 +189,9 @@ var ContentEditable = React.createClass({
     // handle paste manually to ensure we unset our placeholder
     e.preventDefault();
 
+    // unset placeholder
     if (!this.props.text.length) {
-      // unset placeholder
-      this.getDOMNode().textContent = '';
+      this.unsetPlaceholder(); 
     }
 
     var data = e.clipboardData.getData('text/plain');
