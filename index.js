@@ -26,7 +26,9 @@ var ContentEditable = React.createClass({
     onChange: React.PropTypes.func.isRequired,
     placeholder: React.PropTypes.string,
     tagName: React.PropTypes.string,
-    autoFocus: React.PropTypes.bool
+    autoFocus: React.PropTypes.bool,
+    onEnterKey: React.PropTypes.func,
+    onEscapeKey: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -63,13 +65,13 @@ var ContentEditable = React.createClass({
   },
 
   render: function() {
-    
-    // todo: use destructuring 
+
+    // todo: use destructuring
     var editing = this.props.editing;
     var maxLength = this.props.maxLength;
     var className = this.props.className;
     var tagName = this.props.tagName;
-    
+
     // setup our classes
     var classes = {
       ContentEditable: true,
@@ -155,7 +157,25 @@ var ContentEditable = React.createClass({
     }
 
     // todo: cleanup
-    if (key == 'Enter') return prev();
+    if (key == 'Enter') {
+      prev();
+
+      if (this.props.onEnterKey) {
+        this.props.onEnterKey();
+      }
+
+      return;
+    }
+
+    if (key == 'Escape') {
+      prev();
+
+      if (this.props.onEscapeKey) {  
+        this.props.onEscapeKey();
+      }
+      
+      return;
+    }
 
     if (e.metaKey) {
       if (e.keyCode == 66) return prev();
@@ -180,7 +200,7 @@ var ContentEditable = React.createClass({
 
     // unset placeholder
     if (!this.props.text.length) {
-      this.unsetPlaceholder(); 
+      this.unsetPlaceholder();
     }
 
     var data = e.clipboardData.getData('text/plain');
@@ -207,7 +227,7 @@ var ContentEditable = React.createClass({
   onKeyUp: function(e) {
     var stop = this._stop;
     this._stop = false;
-    
+
     // This is a lame hack to support IE, which doesn't
     // support the 'input' event on contenteditable. Definitely
     // not ideal, but it seems to work for now.
