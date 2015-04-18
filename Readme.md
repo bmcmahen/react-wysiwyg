@@ -31,6 +31,8 @@ var Example = React.createClass({
           tagName='div'
           className='name-field'
           onChange={this.onChange}
+          onEnterKey={this.onSave}
+          onEscapeKey={this.onCancel}
           text={this.state.text}
           placeholder='Your Name'
           autofocus={true}
@@ -42,6 +44,15 @@ var Example = React.createClass({
         </button>
       </div>
     );
+  },
+
+  onSave: function() {
+    // logic to save this.state.text here
+    this.replaceState(this.getInitialState())
+  },
+
+  onCancel: function() {
+    this.replaceState(this.getInitialState())
   },
 
   onChange: function(text) {
