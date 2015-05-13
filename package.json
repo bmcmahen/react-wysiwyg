@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:bmcmahen/react-wysiwyg.git"
-  },  
+  },
   "bugs": {
     "url": "https://github.com/bmcmahen/react-wysiwyg/issues"
   },
@@ -34,6 +34,7 @@
     "zuul": "^1.16.5"
   },
   "dependencies": {
+    "classnames": "^2.1.1",
     "selection-range": "^1.0.1"
   }
 }

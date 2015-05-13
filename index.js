@@ -3,7 +3,7 @@
  */
 
 var React = require('react');
-var classSet = require('react/lib/cx');
+var classNames = require('classnames');
 var isNotServer = typeof window !== 'undefined';
 
 var selectionRange;
@@ -98,7 +98,7 @@ var ContentEditable = React.createClass({
     // return our newly created element
     return React.createElement(tagName, {
       tabIndex: this.props.autoFocus ? -1 : 0,
-      className: classSet(classes),
+      className: classNames(classes),
       contentEditable: editing,
       onKeyDown: this.onKeyDown,
       onPaste: this.onPaste,
