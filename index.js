@@ -149,49 +149,49 @@ var ContentEditable = React.createClass({
       self._stop = true;
     }
 
-    var key = e.key;
+      var keyCode = e.keyCode;
 
-    if (key == 'Delete' && !this.props.text.trim().length) {
-      prev();
-      return;
-    }
-
-    // todo: cleanup
-    if (key == 'Enter') {
-      prev();
-
-      if (this.props.onEnterKey) {
-        this.props.onEnterKey();
+      // 'Bold' and 'Italic' text using keyboard
+      if (e.metaKey) {
+          // ⌘ 'b' or ⌘'i' in Mac for bold/italic
+          if (keyCode === 66 || keyCode === 73) {
+              return prev();
+          }
       }
 
-      return;
-    }
+      if (!this.props.text.trim().length) { // If no text
+          switch (keyCode) {
+              case 46:     // 'Delete' key
+              case 8:      // 'Backspace' key
+              case 9:      // 'Tab' key
+              case 39:     // 'Arrow right' key
+              case 37:     // 'Arrow left' key
+              case 40:     // 'Arrow left' key
+              case 38:     // 'Arrow left' key
+                  prev();
+                  break;
 
-    if (key == 'Escape') {
-      prev();
+              case 13:
+                  // 'Enter' key
+                  prev();
+                  if (this.props.onEnterKey) {
+                      this.props.onEnterKey();
+                  }
+                  break;
 
-      if (this.props.onEscapeKey) {  
-        this.props.onEscapeKey();
+              case 27:
+                  // 'Escape' key
+                  prev();
+                  if (this.props.onEscapeKey) {
+                      this.props.onEscapeKey();
+                  }
+                  break;
+
+              default:
+                  this.unsetPlaceholder();
+                  break;
+          }
       }
-      
-      return;
-    }
-
-    if (e.metaKey) {
-      if (e.keyCode == 66) return prev();
-      if (e.keyCode == 73) return prev();
-    }
-
-    if (!this.props.text.trim().length) {
-      if (key == 'Backspace') return prev();
-      if (key == 'Delete') return prev();
-      if (key == 'ArrowRight') return prev();
-      if (key == 'ArrowLeft') return prev();
-      if (key == 'ArrowDown') return prev();
-      if (key == 'ArrowUp') return prev();
-      if (key == 'Tab') return prev();
-      this.unsetPlaceholder();
-    }
   },
 
   onPaste: function(e){
