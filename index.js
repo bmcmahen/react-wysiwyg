@@ -53,12 +53,12 @@ var ContentEditable = React.createClass({
     }
 
     if (this.state && this.state.range) {
-      selectionRange(this.getDOMNode(), this.state.range);
+      selectionRange(React.findDOMNode(this), this.state.range);
     }
   },
 
   autofocus: function(){
-    this.getDOMNode().focus();
+    React.findDOMNode(this).focus();
     if (!this.props.text.length) {
       this.setCursorToStart();
     }
@@ -112,21 +112,21 @@ var ContentEditable = React.createClass({
 
   setPlaceholder: function(text){
     if (!text.trim().length && this.props.placeholder) {
-      this.getDOMNode().textContent = this.props.placeholder;
+      React.findDOMNode(this).textContent = this.props.placeholder;
       this.setCursorToStart();
     }
   },
 
   unsetPlaceholder: function(){
-    this.getDOMNode().textContent = '';
+    React.findDOMNode(this).textContent = '';
   },
 
   setCursorToStart: function(){
-    this.getDOMNode().focus();
+    React.findDOMNode(this).focus();
     if (isNotServer) {
       var sel = window.getSelection();
       var range = document.createRange();
-      range.setStart(this.getDOMNode(), 0);
+      range.setStart(React.findDOMNode(this), 0);
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
@@ -244,7 +244,7 @@ var ContentEditable = React.createClass({
   },
 
   setText: function(val) {
-    var range = selectionRange(this.getDOMNode());
+    var range = selectionRange(React.findDOMNode(this));
     this.setState({ range : range });
     this.props.onChange(val);
   }

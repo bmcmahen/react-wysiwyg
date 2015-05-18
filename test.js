@@ -43,7 +43,7 @@ describe('ContentEditable', function(){
     obj = obj || {};
     var component = ContainerFactory(obj);
     var rendered = T.renderIntoDocument(component);
-    var el = rendered.getDOMNode();
+    var el = React.findDOMNode(rendered);
     return {
       el : el.children[0],
       component: component
@@ -86,7 +86,7 @@ describe('ContentEditable', function(){
     var container = document.createElement('div');
     document.body.appendChild(container);
     var rendered = React.render(component, container);
-    var el = rendered.getDOMNode().children[0];
+    var el = React.findDOMNode(rendered).children[0];
     expect(el == document.activeElement).to.be.ok();
   });
 
