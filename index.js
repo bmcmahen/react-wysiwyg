@@ -68,7 +68,6 @@ var ContentEditable = React.createClass({
 
     // todo: use destructuring
     var editing = this.props.editing;
-    var maxLength = this.props.maxLength;
     var className = this.props.className;
     var tagName = this.props.tagName;
 
