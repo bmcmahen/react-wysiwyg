@@ -35,7 +35,7 @@ var Example = React.createClass({
           onEscapeKey={this.onCancel}
           text={this.state.text}
           placeholder='Your Name'
-          autofocus={true}
+          autoFocus={true}
           maxLength={200}
           editing={this.state.editing}
         />
