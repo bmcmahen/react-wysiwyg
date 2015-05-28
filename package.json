@@ -1,6 +1,6 @@
 {
   "name": "react-wysiwyg",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "enable limited interaction with a content editable element, useful for in-place, wysiwyg editing",
   "main": "index.js",
   "scripts": {},
