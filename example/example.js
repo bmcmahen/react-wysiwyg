@@ -22,6 +22,8 @@ var Example = React.createClass({
           autoFocus={true}
           maxLength={200}
           onChange={this.onChange}
+          onEnterKey={this.onEnterKey}
+          saveOnEnterKey={true}
           editing={this.state.editing}
         />
         <button onClick={this.enableEditing}>
@@ -40,6 +42,11 @@ var Example = React.createClass({
 
   enableEditing: function(){
     // set your contenteditable field into editing mode.
+    this.setState({ editing: !this.state.editing });
+  },
+
+  onEnterKey: function(text){
+    alert("You pressed enter! Saving: "+text);
     this.setState({ editing: !this.state.editing });
   }
 
