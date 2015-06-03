@@ -28,7 +28,8 @@ var ContentEditable = React.createClass({
     tagName: React.PropTypes.string,
     autoFocus: React.PropTypes.bool,
     onEnterKey: React.PropTypes.func,
-    onEscapeKey: React.PropTypes.func
+    onEscapeKey: React.PropTypes.func,
+    saveOnEnterKey: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -150,7 +151,16 @@ var ContentEditable = React.createClass({
 
       var keyCode = e.keyCode;
 
-      // 'Bold' and 'Italic' text using keyboard
+      var saveOnEnterKey = this.props.saveOnEnterKey || false;
+
+      if(saveOnEnterKey && keyCode === 13){
+        var text = e.target.textContent;
+        this.props.onEnterKey(text);
+        return;
+      }
+
+
+    // 'Bold' and 'Italic' text using keyboard
       if (e.metaKey) {
           // ⌘ 'b' or ⌘'i' in Mac for bold/italic
           if (keyCode === 66 || keyCode === 73) {
