@@ -38,7 +38,7 @@ var ContentEditable = React.createClass({
     };
   },
 
-  getInitalState: function(){
+  getInitialState: function(){
     return {};
   },
 
