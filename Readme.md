@@ -2,7 +2,7 @@
 
 ![react-wysiwyg image](demo.gif)
 
-This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing.
+This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing, or to implement something like twitter like functionality.
 
 The only issue is browser support. It works well in the latest versions of Chrome, Safari, Firefox, and iOS Safari. IE support is sketchy because IE doesn't support the `input` event handler on `contenteditable`. Accessibility might also be an issue -- I need to do more testing in that regard.
 
@@ -58,7 +58,7 @@ var Example = React.createClass({
     );
   },
 
-  onChange: function(innerHTML, setPlaceholder) {
+  onChange: function(textContent, setPlaceholder) {
     if (setPlaceholder) {
       this.setState({
         placeholder: true,
@@ -67,7 +67,7 @@ var Example = React.createClass({
     } else {
       this.setState({
         placeholder: false,
-        html: innerHTML
+        html: textContent
       })
     }
   },
