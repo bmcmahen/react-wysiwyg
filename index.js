@@ -285,10 +285,13 @@ var ContentEditable = React.createClass({
     this.props.onKeyPress(e)
   },
 
-
   onKeyUp: function(e) {
     if (this.supportsInput) return
 
+    // a better solution is to just run a raf, which continuously
+    // checks innerHTMl, and passes it to the parent. 
+    //
+    //
     // This is a super lame hack to support IE, which doesn't
     // support the 'input' event on contenteditable. Definitely
     // not ideal, but it seems to kinda work for now. Maybe Edge
