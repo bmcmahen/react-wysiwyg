@@ -4,7 +4,12 @@
 
 var React = require('react')
 var classNames = require('classnames')
-var selectionRange = require('selection-range')
+var isServer = typeof window === 'undefined'
+
+if (!isServer) {
+  var selectionRange = require('selection-range')
+}
+
 var noop = function(){}
 
 
@@ -194,12 +199,13 @@ var ContentEditable = React.createClass({
   },
 
   onKeyDown: function(e) {
-
+    var self = this
     this.props.onKeyDown(e)
 
     function prev () {
       e.preventDefault();
       e.stopPropagation();
+      self.stop = true
     }
 
     var key = e.keyCode;
@@ -287,21 +293,23 @@ var ContentEditable = React.createClass({
 
   onKeyUp: function(e) {
     if (this.supportsInput) return
-
-    // a better solution is to just run a raf, which continuously
-    // checks innerHTMl, and passes it to the parent. 
-    //
-    //
-    // This is a super lame hack to support IE, which doesn't
-    // support the 'input' event on contenteditable. Definitely
-    // not ideal, but it seems to kinda work for now. Maybe Edge
-    // supports this :/
-    if (!e.target.textContent.trim()) {
-      this.props.onChange('', true, '')
+    if (this.stop) {
+      this.stop = false
       return
     }
 
-    this.props.onChange(e.target.textContent, false, e.target.innerHTML)
+    var target = React.findDOMNode(this)
+    var self = this
+
+    if (!target.textContent.trim().length) {
+      this.props.onChange('', true, '')
+      setTimeout(function(){
+        self.setCursorToStart()
+      }, 1)
+    } else {
+      this.props.onChange(target.textContent, false, target.innerHTML)
+    }
+
   },
 
   onInput: function(e) {

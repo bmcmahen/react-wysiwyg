@@ -18,11 +18,11 @@ var Example = React.createClass({
 
   },
 
-  componentDidMount () {
+  componentDidMount: function () {
     window.requestAnimationFrame(this.checkCursor)
   },
 
-  checkCursor (timestamp) {
+  checkCursor: function (timestamp) {
     var self = this
     var selection = window.getSelection()
 
@@ -38,11 +38,11 @@ var Example = React.createClass({
         // you could use the node to determine its position,
         // and show the dropdown inline, too.
         this.setState({ queryMention : node.textContent })
-      } else {
+      } else if (this.state.queryMention) {
         this.setState({ queryMention: false })
       }
 
-    } else {
+    } else if (this.state.queryMention) {
       this.setState({ queryMention: false })
     }
 

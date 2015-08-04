@@ -2,9 +2,9 @@
 
 ![react-wysiwyg image](demo.gif)
 
-This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing, or to implement something like twitter like functionality.
+This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing, or to implement something like Twitter's tweet-box, as seen in the above example.
 
-The only issue is browser support. It works well in the latest versions of Chrome, Safari, Firefox, and iOS Safari. IE support is sketchy because IE doesn't support the `input` event handler on `contenteditable`. Accessibility might also be an issue -- I need to do more testing in that regard.
+This module works well in the latest version of Chrome, Safari, Firefox, and iOS Safari. It mostly works in IE, thanks to a series of unfortunate hacks. Further testing for accessibility and browser support is required.
 
 It's worth looking at the supplied example to get a sense of how to use this module.
 
