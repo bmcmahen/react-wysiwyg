@@ -70,9 +70,16 @@ var Example = React.createClass({
         html: ''
       })
     } else {
+
+
+      var regex = /(^|[^@\w])@(\w{1,15})\b/g
+      var replace = '$1<a href="http://twitter.com/$2">@$2</a>'
+      var output = html.replace(regex, replace)
+
+
       this.setState({
         placeholder: false,
-        html: html
+        html: output
       })
     }
 

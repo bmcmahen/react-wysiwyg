@@ -7,16 +7,16 @@ var Container = React.createClass({
 
   getInitialState: function() {
     return {
-      text: '',
-      editing: false 
+      html: 'default',
+      editing: false,
+      placeholder: false
     };
   },
 
   render: function(){
     var ce = ContentEditable({
       editing: this.props.editing || this.state.editing,
-      placeholder: 'placeholder',
-      className: 'custom',
+      placeholder: this.state.placeholder,
       text: this.props.text || '',
       onChange: this.onChange,
       autoFocus: true

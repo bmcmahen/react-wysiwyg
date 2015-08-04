@@ -2,8 +2,9 @@
  * Module dependencies
  */
 
-var React = require('react');
-var classNames = require('classnames');
+var React = require('react')
+var classNames = require('classnames')
+var selectionRange = require('selection-range')
 var noop = function(){}
 
 
@@ -50,11 +51,15 @@ var ContentEditable = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps) {
-    if (nextProps.placeholder !== this.props.placeholder) {
+    var el = React.findDOMNode(this)
+    if (nextProps.html !== el.innerHTML) {
+      if (nextProps.html) {
+        this._range = selectionRange(el)
+      }
       return true
     }
 
-    if (nextProps.html !== React.findDOMNode(this).innerHTML) {
+    if (nextProps.placeholder !== this.props.placeholder) {
       return true
     }
 
@@ -68,14 +73,19 @@ var ContentEditable = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     if (!this.props.editing && nextProps.editing) {
       if (this.contentIsEmpty(nextProps.html)) {
-        this.props.onChange(null, true)
+        this.props.onChange('', true)
       }
     }
   },
 
   componentDidUpdate: function() {
     if (!this.props.editing && !this.props.html) {
-      this.props.onChange('<br />')
+      this.props.onChange('')
+    }
+
+    if (this._range) {
+      selectionRange(React.findDOMNode(this), this._range)
+      delete this._range
     }
   },
 
@@ -129,7 +139,7 @@ var ContentEditable = React.createClass({
   },
 
   unsetPlaceholder: function(){
-    this.props.onChange(null, false)
+    this.props.onChange('', false, '')
   },
 
   setCursorToStart: function(){
@@ -263,7 +273,7 @@ var ContentEditable = React.createClass({
     // handle paste manually to ensure we unset our placeholder
     e.preventDefault();
     var data = e.clipboardData.getData('text/plain')
-    this.props.onChange(data, false)
+    this.props.onChange(data, false, data)
     // a bit hacky. set cursor to end of contents
     // after the paste, which is async
     setTimeout(function(){
@@ -284,11 +294,11 @@ var ContentEditable = React.createClass({
     // not ideal, but it seems to kinda work for now. Maybe Edge
     // supports this :/
     if (!e.target.textContent.trim()) {
-      this.props.onChange(null, true)
+      this.props.onChange('', true, '')
       return
     }
 
-    this.props.onChange(e.target.innerHTML, false)
+    this.props.onChange(e.target.textContent, false, e.target.innerHTML)
   },
 
   onInput: function(e) {
@@ -296,11 +306,11 @@ var ContentEditable = React.createClass({
     var val = e.target.innerHTML
     var text = e.target.textContent.trim()
     if (!text) {
-      this.props.onChange(null, true)
+      this.props.onChange('', true, '')
       return
     }
 
-    this.props.onChange(e.target.innerHTML, false)
+    this.props.onChange(e.target.textContent, false, e.target.innerHTML)
   }
 
 });
