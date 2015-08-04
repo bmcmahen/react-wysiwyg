@@ -2,14 +2,25 @@
 
 ![react-wysiwyg image](demo.gif)
 
-This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing. It comes with support for placeholders and max-length validation.
+This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing.
 
-I've currently tested this in Firefox, Chrome, Safari (desktop & mobile), and IE 9-11.
+The only issue is browser support. It works well in the latest versions of Chrome, Safari, Firefox, and iOS Safari. IE support is sketchy because IE doesn't support the `input` event handler on `contenteditable`. Accessibility might also be an issue -- I need to do more testing in that regard.
+
+It's worth looking at the supplied example to get a sense of how to use this module.
 
 ## Install
 
 ```
 $ npm install react-wysiwyg
+```
+
+## Run the example
+
+```
+$ git clone https://github.com/bmcmahen/react-wysiwyg.git && cd react-wysiwyg
+$ npm install
+$ make build
+$ make example
 ```
 
 ## Usage
@@ -18,10 +29,13 @@ $ npm install react-wysiwyg
 var ContentEditable = require('react-wysiwyg');
 
 var Example = React.createClass({
-  
-  getInitialState: {
-    text: '',
-    editing: false
+
+  getInitialState: function(){
+    return {
+      html: 'default text',
+      placeholder: false,
+      editing: false
+    }
   },
 
   render: function(){
@@ -29,14 +43,10 @@ var Example = React.createClass({
       <div>
         <ContentEditable
           tagName='div'
-          className='name-field'
           onChange={this.onChange}
-          onEnterKey={this.onSave}
-          onEscapeKey={this.onCancel}
-          text={this.state.text}
-          placeholder='Your Name'
-          autoFocus={true}
-          maxLength={200}
+          html={this.state.html}
+          placeholder={this.state.placeholder}
+          placeholderText='Your Name'
           editing={this.state.editing}
         />
         <button onClick={this.enableEditing}>
@@ -46,20 +56,18 @@ var Example = React.createClass({
     );
   },
 
-  onSave: function() {
-    // logic to save this.state.text here
-    this.replaceState(this.getInitialState())
-  },
-
-  onCancel: function() {
-    this.replaceState(this.getInitialState())
-  },
-
-  onChange: function(text) {
-    // in order to render the updated text,
-    // you need to pass it as a prop to contentEditable.
-    // This gives you increased flexibility.
-    this.setState({ text: text });
+  onChange: function(innerHTML, setPlaceholder) {
+    if (setPlaceholder) {
+      this.setState({
+        placeholder: true,
+        html: ''
+      })
+    } else {
+      this.setState({
+        placeholder: false,
+        html: innerHTML
+      })
+    }
   },
 
   enableEditing: function(){

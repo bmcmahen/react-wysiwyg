@@ -2,52 +2,90 @@ var React = require('react');
 var ContentEditable = require('../index');
 
 var Example = React.createClass({
-  
+
   getInitialState: function(){
+    var editing = false
+
     return {
-      text: 'default text',
-      editing: false
-    };
+      html: 'default value',
+      editing: false,
+      placeholder: false
+    }
+
   },
 
   render: function(){
     return (
       <div>
+        <div aria-live='polite'>{this.state.error}</div>
         <ContentEditable
+          ref='editable'
           tagName='div'
-          className='name-field'
+          html={this.state.html}
+          placeholder={this.state.placeholder}
+          placeholderText='Your Name'
+          onKeyPress={this.onKeyPress}
+          preventStyling
+          noLinebreaks
           onChange={this.onChange}
-          text={this.state.text}
-          placeholder='Placeholder Text'
-          autoFocus={true}
-          maxLength={200}
-          onChange={this.onChange}
-          onEnterKey={this.onEnterKey}
-          saveOnEnterKey={true}
           editing={this.state.editing}
         />
         <button onClick={this.enableEditing}>
           {!this.state.editing ? 'Enable Editing' : 'Finish Editing'}
         </button>
+        <button onClick={this.autofocus}>
+          autofocus if editing
+        </button>
       </div>
     );
   },
 
-  onChange: function(text) {
-    // in order to render the updated text,
+  autofocus: function () {
+    if (this.state.editing) {
+      this.refs.editable.autofocus()
+    }
+  },
+
+  onKeyPress: function (e) {
+    var val = e.target.textContent;
+
+    // max-length validation on the fly
+    if (val.length > 30) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.setState({ error: 'Max length is 30 characters'})
+    } else {
+      this.setState({ error: null })
+    }
+
+  },
+
+  onChange: function(html, setPlaceholder) {
+    // in order to render the updated html,
     // you need to pass it as a prop to contentEditable.
     // This gives you increased flexibility.
-    this.setState({ text: text });
+    if (setPlaceholder) {
+      this.setState({
+        placeholder: true,
+        html: ''
+      })
+    } else {
+      this.setState({
+        placeholder: false,
+        html: html
+      })
+    }
+
   },
 
   enableEditing: function(){
+    var editing = !this.state.editing
     // set your contenteditable field into editing mode.
-    this.setState({ editing: !this.state.editing });
-  },
-
-  onEnterKey: function(text){
-    alert("You pressed enter! Saving: "+text);
-    this.setState({ editing: !this.state.editing });
+    this.setState({ editing: editing });
+    if (editing) {
+      this.refs.editable.autofocus()
+      this.refs.editable.setCursorToEnd()
+    }
   }
 
 });

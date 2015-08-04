@@ -4,13 +4,7 @@
 
 var React = require('react');
 var classNames = require('classnames');
-var isNotServer = typeof window !== 'undefined';
-
-var selectionRange;
-
-if (isNotServer) {
-  selectionRange = require('selection-range');
-}
+var noop = function(){}
 
 
 /**
@@ -21,20 +15,33 @@ var ContentEditable = React.createClass({
 
   propTypes: {
     editing: React.PropTypes.bool,
-    text: React.PropTypes.string.isRequired,
+    html: React.PropTypes.string,
     maxLength: React.PropTypes.number,
     onChange: React.PropTypes.func.isRequired,
-    placeholder: React.PropTypes.string,
+    placeholder: React.PropTypes.bool,
+    placeholderText: React.PropTypes.string,
     tagName: React.PropTypes.string,
     autoFocus: React.PropTypes.bool,
     onEnterKey: React.PropTypes.func,
     onEscapeKey: React.PropTypes.func,
-    saveOnEnterKey: React.PropTypes.bool
+    preventStyling: React.PropTypes.bool,
+    noLinebreaks: React.PropTypes.bool,
+    onBold: React.PropTypes.func,
+    onItalic: React.PropTypes.func,
+    onKeyDown: React.PropTypes.func,
+    onKeyPress: React.PropTypes.func,
+    placeholderStyle: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
-      text: ''
+      html: '',
+      placeholder: false,
+      placeholderText: '',
+      onBold: noop,
+      onItalic: noop,
+      onKeyDown: noop,
+      onKeyPress: noop
     };
   },
 
@@ -42,27 +49,38 @@ var ContentEditable = React.createClass({
     return {};
   },
 
-  componentDidMount: function(){
-    if (this.props.editing && this.props.autoFocus) {
-      this.autofocus();
+  shouldComponentUpdate: function(nextProps) {
+    if (nextProps.placeholder !== this.props.placeholder) {
+      return true
+    }
+
+    if (nextProps.html !== React.findDOMNode(this).innerHTML) {
+      return true
+    }
+
+    if (nextProps.editing !== this.props.editing) {
+      return true
+    }
+
+    return false
+  },
+
+  componentWillReceiveProps: function (nextProps) {
+    if (!this.props.editing && nextProps.editing) {
+      if (this.contentIsEmpty(nextProps.html)) {
+        this.props.onChange(null, true)
+      }
     }
   },
 
-  componentDidUpdate: function(prevProps, prevState){
-    if (!prevProps.editing && this.props.editing && this.props.autoFocus) {
-      this.autofocus();
-    }
-
-    if (this.state && this.state.range) {
-      selectionRange(React.findDOMNode(this), this.state.range);
+  componentDidUpdate: function() {
+    if (!this.props.editing && !this.props.html) {
+      this.props.onChange('<br />')
     }
   },
 
   autofocus: function(){
     React.findDOMNode(this).focus();
-    if (!this.props.text.length) {
-      this.setCursorToStart();
-    }
   },
 
   render: function() {
@@ -74,9 +92,12 @@ var ContentEditable = React.createClass({
 
     // setup our classes
     var classes = {
-      ContentEditable: true,
-      'is-empty': !this.props.text.trim().length
+      ContentEditable: true
     };
+
+    var placeholderStyle = this.props.placeholderStyle || {
+      color: '#bbbbbb'
+    }
 
     if (className) {
       classes[className] = true;
@@ -85,171 +106,201 @@ var ContentEditable = React.createClass({
     // set 'div' as our default tagname
     tagName = tagName || 'div';
 
-    var content;
-
-    if (!this.props.text.trim().length && editing) {
-      content = this.props.placeholder;
-    } else if (!this.props.text.trim().length) {
-      content = React.createElement('br');
-    } else {
-      content = this.props.text;
-    }
+    var content = this.props.html;
 
     // return our newly created element
     return React.createElement(tagName, {
-      tabIndex: this.props.autoFocus ? -1 : 0,
+      tabIndex: 0,
       className: classNames(classes),
       contentEditable: editing,
       onKeyDown: this.onKeyDown,
       onPaste: this.onPaste,
       onMouseDown: this.onMouseDown,
+      'aria-label': this.props.placeholderText,
       onTouchStart: this.onMouseDown,
+      style: this.props.placeholder ? placeholderStyle : {},
       onKeyPress: this.onKeyPress,
       onInput: this.onInput,
-      onKeyUp: this.onKeyUp
-    }, content);
-  },
-
-  setPlaceholder: function(text){
-    if (!text.trim().length && this.props.placeholder) {
-      React.findDOMNode(this).textContent = this.props.placeholder;
-      this.setCursorToStart();
-    }
+      onKeyUp: this.onKeyUp,
+      dangerouslySetInnerHTML: {
+        __html : this.props.placeholder ? this.props.placeholderText : content
+      }
+    });
   },
 
   unsetPlaceholder: function(){
-    React.findDOMNode(this).textContent = '';
+    this.props.onChange(null, false)
   },
 
   setCursorToStart: function(){
     React.findDOMNode(this).focus();
-    if (isNotServer) {
-      var sel = window.getSelection();
-      var range = document.createRange();
-      range.setStart(React.findDOMNode(this), 0);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
+    var sel = window.getSelection();
+    var range = document.createRange();
+    range.setStart(React.findDOMNode(this), 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  },
+
+  setCursorToEnd: function() {
+    var el = React.findDOMNode(this)
+    el.focus()
+    var range = document.createRange()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    var sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  },
+
+  contentIsEmpty: function (content) {
+
+    if (this.state.placeholder) {
+      return true
+    }
+
+    if (!content) {
+      return true
+    }
+
+    if (content === '<br />') {
+      return true
+    }
+
+    if (!content.trim().length) {
+      return true
+    }
+
+    return false
+  },
+
+
+  onMouseDown: function(e) {
+    // prevent cursor placement if placeholder is set
+    if (this.contentIsEmpty(this.props.html)) {
+      this.setCursorToStart()
+      e.preventDefault()
     }
   },
 
-  onMouseDown: function(e) {
-    if (this.props.text.length) return;
-    // if we have a placeholder, set the cursor to the start
-    this.setCursorToStart();
-    e.preventDefault();
-  },
-
   onKeyDown: function(e) {
-    var self = this;
+
+    this.props.onKeyDown(e)
 
     function prev () {
       e.preventDefault();
       e.stopPropagation();
-      self._stop = true;
     }
 
-      var keyCode = e.keyCode;
+    var key = e.keyCode;
 
-      var saveOnEnterKey = this.props.saveOnEnterKey || false;
+    // bold & italic styling
+    if (e.metaKey) {
 
-      if(saveOnEnterKey && keyCode === 13){
-        var text = e.target.textContent;
-        this.props.onEnterKey(text);
-        return;
+      // bold
+      if (key === 66) {
+        this.props.onBold(e)
+        if (this.props.preventStyling) {
+          return prev()
+        }
+
+      // italic
+      } else if (key === 73) {
+        this.props.onItalic(e)
+        if (this.props.preventStyling) {
+          return prev()
+        }
+      }
+    }
+
+    // prevent linebreaks
+    if (this.props.noLinebreaks && (key === 13)) {
+      return prev()
+    }
+
+    // placeholder behaviour
+    if (this.contentIsEmpty(this.props.html)) { // If no text
+
+      if (e.metaKey || (e.shiftKey && (key === 16))) {
+        return prev()
       }
 
+      switch (key) {
+        case 46:     // 'Delete' key
+        case 8:      // 'Backspace' key
+        case 9:      // 'Tab' key
+        case 39:     // 'Arrow right' key
+        case 37:     // 'Arrow left' key
+        case 40:     // 'Arrow left' key
+        case 38:     // 'Arrow left' key
+          prev();
+          break;
 
-    // 'Bold' and 'Italic' text using keyboard
-      if (e.metaKey) {
-          // ⌘ 'b' or ⌘'i' in Mac for bold/italic
-          if (keyCode === 66 || keyCode === 73) {
-              return prev();
+        case 13:
+          // 'Enter' key
+          prev();
+          if (this.props.onEnterKey) {
+            this.props.onEnterKey();
           }
-      }
+          break;
 
-      if (!this.props.text.trim().length) { // If no text
-          switch (keyCode) {
-              case 46:     // 'Delete' key
-              case 8:      // 'Backspace' key
-              case 9:      // 'Tab' key
-              case 39:     // 'Arrow right' key
-              case 37:     // 'Arrow left' key
-              case 40:     // 'Arrow left' key
-              case 38:     // 'Arrow left' key
-                  prev();
-                  break;
-
-              case 13:
-                  // 'Enter' key
-                  prev();
-                  if (this.props.onEnterKey) {
-                      this.props.onEnterKey();
-                  }
-                  break;
-
-              case 27:
-                  // 'Escape' key
-                  prev();
-                  if (this.props.onEscapeKey) {
-                      this.props.onEscapeKey();
-                  }
-                  break;
-
-              default:
-                  this.unsetPlaceholder();
-                  break;
+        case 27:
+          // 'Escape' key
+          prev();
+          if (this.props.onEscapeKey) {
+            this.props.onEscapeKey();
           }
+          break;
+
+        default:
+          this.unsetPlaceholder();
+          break;
       }
+    }
   },
 
   onPaste: function(e){
     // handle paste manually to ensure we unset our placeholder
     e.preventDefault();
-
-    // unset placeholder
-    if (!this.props.text.length) {
-      this.unsetPlaceholder();
-    }
-
-    var data = e.clipboardData.getData('text/plain');
-
-    // prevent text longer then our max-length from being
-    // added
-    if (this.props.maxLength) {
-      data = data.slice(0, this.props.maxLength);
-    }
-    this.setText(data);
+    var data = e.clipboardData.getData('text/plain')
+    this.props.onChange(data, false)
+    // a bit hacky. set cursor to end of contents
+    // after the paste, which is async
+    setTimeout(function(){
+      this.setCursorToEnd()
+    }.bind(this), 0)
   },
 
   onKeyPress: function(e){
-    var val = e.target.textContent;
-
-    // max-length validation on the fly
-    if (this.props.maxLength && (val.length > this.props.maxLength)) {
-      e.preventDefault();
-      e.stopPropagation();
-      return;
-    }
+    this.props.onKeyPress(e)
   },
 
-  onKeyUp: function(e) {
-    var stop = this._stop;
-    this._stop = false;
 
-    // This is a lame hack to support IE, which doesn't
+  onKeyUp: function(e) {
+    if (this.supportsInput) return
+
+    // This is a super lame hack to support IE, which doesn't
     // support the 'input' event on contenteditable. Definitely
-    // not ideal, but it seems to work for now.
-    if (!stop && !this._ignoreKeyup) {
-      this.setText(e.target.textContent);
+    // not ideal, but it seems to kinda work for now. Maybe Edge
+    // supports this :/
+    if (!e.target.textContent.trim()) {
+      this.props.onChange(null, true)
+      return
     }
 
-    this.setPlaceholder(e.target.textContent);
+    this.props.onChange(e.target.innerHTML, false)
   },
 
   onInput: function(e) {
-    this._ignoreKeyup = true;
-    this.setText(e.target.textContent);
+    this.supportsInput = true
+    var val = e.target.innerHTML
+    var text = e.target.textContent.trim()
+    if (!text) {
+      this.props.onChange(null, true)
+      return
+    }
+
+    this.props.onChange(e.target.innerHTML, false)
   },
 
   setText: function(val) {
