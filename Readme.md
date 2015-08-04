@@ -45,6 +45,8 @@ var Example = React.createClass({
           tagName='div'
           onChange={this.onChange}
           html={this.state.html}
+          preventStyling
+          noLinebreaks
           placeholder={this.state.placeholder}
           placeholderText='Your Name'
           editing={this.state.editing}

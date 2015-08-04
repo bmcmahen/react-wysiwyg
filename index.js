@@ -301,12 +301,6 @@ var ContentEditable = React.createClass({
     }
 
     this.props.onChange(e.target.innerHTML, false)
-  },
-
-  setText: function(val) {
-    var range = selectionRange(React.findDOMNode(this));
-    this.setState({ range : range });
-    this.props.onChange(val);
   }
 
 });
