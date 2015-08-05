@@ -7,9 +7,9 @@ module.exports = function (config) {
     preprocessors: {
       '__tests__/*.js': [ 'browserify']
     },
-    reporters: [ 'dots' ],
+    reporters: [ 'mocha' ],
     browsers: ['Chrome'],
-    logLevel: 'LOG_DEBUG',
+    logLevel: config.LOG_ERROR,
     browserify: {
       debug: true,
       transform: ['babelify']
