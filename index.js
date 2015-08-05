@@ -22,12 +22,10 @@ var ContentEditable = React.createClass({
   propTypes: {
     editing: React.PropTypes.bool,
     html: React.PropTypes.string,
-    maxLength: React.PropTypes.number,
     onChange: React.PropTypes.func.isRequired,
     placeholder: React.PropTypes.bool,
     placeholderText: React.PropTypes.string,
     tagName: React.PropTypes.string,
-    autoFocus: React.PropTypes.bool,
     onEnterKey: React.PropTypes.func,
     onEscapeKey: React.PropTypes.func,
     preventStyling: React.PropTypes.bool,

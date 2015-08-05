@@ -1,4 +1,4 @@
-zuul = node_modules/.bin/zuul
+jest = node_modules/.bin/jest
 browserify = node_modules/.bin/browserify
 server = node_modules/.bin/http-server
 watchify = node_modules/.bin/watchify
@@ -7,10 +7,10 @@ node_modules:
 	npm install --dev
 
 build:
-	$(watchify) example/index.js -t reactify --debug -o example/bundle.js
+	$(watchify) example/index.js -t babelify --debug -o example/bundle.js
 
 test: node_modules
-	$(zuul) --local 8080 --ui mocha-bdd -- test.js
+	npm test
 
 example:
 	$(server) example
