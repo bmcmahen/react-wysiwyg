@@ -1,6 +1,6 @@
 {
   "name": "react-wysiwyg",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "enable limited interaction with a content editable element, useful for in-place, wysiwyg editing",
   "main": "index.js",
   "scripts": {
@@ -44,7 +44,8 @@
     "watchify": "^3.3.1"
   },
   "dependencies": {
-    "classnames": "^2.1.1"
+    "classnames": "^2.1.1",
+    "escape-html": "^1.0.2"
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",

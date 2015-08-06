@@ -4,6 +4,7 @@
 
 var React = require('react')
 var classNames = require('classnames')
+var escapeHTML = require('escape-html')
 var isServer = typeof window === 'undefined'
 
 if (!isServer) {
@@ -277,7 +278,7 @@ var ContentEditable = React.createClass({
     // handle paste manually to ensure we unset our placeholder
     e.preventDefault();
     var data = e.clipboardData.getData('text/plain')
-    this.props.onChange(data, false, data)
+    this.props.onChange(escapeHTML(data), false, data)
     // a bit hacky. set cursor to end of contents
     // after the paste, which is async
     setTimeout(function(){
@@ -319,7 +320,7 @@ var ContentEditable = React.createClass({
       return
     }
 
-    this.props.onChange(e.target.textContent, false, e.target.innerHTML)
+    this.props.onChange(escapeHTML(e.target.textContent), false, e.target.innerHTML)
   }
 
 });

@@ -108,9 +108,6 @@ var Example = React.createClass({
       })
     } else {
 
-      // downside of this approach is that we need to
-      // sanitize any user input
-      text = escapeHTML(text)
       var copy = text.slice(0, this.state.maxLength)
 
       // mutations
