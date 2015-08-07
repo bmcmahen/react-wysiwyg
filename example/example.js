@@ -25,7 +25,8 @@ var Example = React.createClass({
   },
 
   componentDidMount: function () {
-    window.requestAnimationFrame(this.checkCursor)
+    // Gives the window a callback to call before the next repaint.
+    // window.requestAnimationFrame(this.checkCursor)
   },
 
   checkCursor: function (timestamp) {
