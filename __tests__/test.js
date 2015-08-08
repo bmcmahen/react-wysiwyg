@@ -1,39 +1,24 @@
 var assert = require('assert')
 var React = require('react/addons')
 var Test = React.addons.TestUtils
-var Edit = require('../')
 var expect = require('expect')
-var _ = require('lodash')
-
-var noop = function(){}
+var Factory = require('./factories');
 
 describe('Editable', () => {
-
-  function getEditor(args) {
-    let props = _.assign({
-      editing: true,
-      html: 'hi',
-      placeholder: false,
-      onChange: noop,
-      placeholderText: 'placeholder'
-    }, args || {})
-
-    return Test.renderIntoDocument(<Edit {...props} />)
-  }
 
   function getEl(component) {
     return React.findDOMNode(component)
   }
 
   it('should set a default value', function(){
-    let c = getEditor()
+    let c = Factory.editor()
     expect(getEl(c).textContent).toEqual('hi')
     expect(getEl(c).className).toEqual('ContentEditable')
     expect(getEl(c).tagName).toEqual('DIV')
   })
 
   it('should implement a placeholder', () => {
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: '',
       placeholder: true
@@ -42,7 +27,7 @@ describe('Editable', () => {
   })
 
   it('should remove the placeholder with certain keys', (next) => {
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: '',
       placeholder: true,
@@ -63,7 +48,7 @@ describe('Editable', () => {
   })
 
   it('should not remove the placeholder when pressing certain keys', () => {
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: '',
       placeholder: true
@@ -78,7 +63,7 @@ describe('Editable', () => {
   })
 
   it('should set innerHTML', () => {
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: '<b>hi</b>',
       placeholder: false
@@ -89,7 +74,7 @@ describe('Editable', () => {
   })
 
   it('should disable editing', () => {
-    let c = getEditor({
+    let c = Factory.editor({
       editing: false,
       html: 'hello',
       placeholder: false
@@ -100,12 +85,12 @@ describe('Editable', () => {
   })
 
   it('should enable editing', () => {
-    let c = getEditor()
+    let c = Factory.editor()
     expect(getEl(c).getAttribute('contenteditable')).toEqual("true")
   })
 
   it('should override placeholder styles', () => {
-    let c = getEditor({
+    let c = Factory.editor({
       editing: false,
       html: '',
       placeholder: true,
@@ -119,7 +104,7 @@ describe('Editable', () => {
 
   it('should emit a change event when content has changed', (next) => {
     let total = 0
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: 'hi',
       placeholder: false,
@@ -141,7 +126,7 @@ describe('Editable', () => {
 
   it('should disable bold and italics', () => {
 
-    let c = getEditor({
+    let c = Factory.editor({
       preventStyling: true,
       editing: true,
       html: 'hi',
@@ -156,7 +141,7 @@ describe('Editable', () => {
   })
 
   it('should emit events for bold', (next) => {
-    let c = getEditor({
+    let c = Factory.editor({
       preventStyling: true,
       editing: true,
       html: 'hi',
@@ -171,7 +156,7 @@ describe('Editable', () => {
   })
 
   it('should emit events for italic', (next) => {
-    let c = getEditor({
+    let c = Factory.editor({
       preventStyling: true,
       editing: true,
       html: 'hi',
@@ -187,7 +172,7 @@ describe('Editable', () => {
 
   it('should work using keyUp as well, as a fallback', (next) => {
     let total = 0
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: 'hi',
       placeholder: false,
@@ -209,7 +194,7 @@ describe('Editable', () => {
 
   it('should prevent linebreaks', (next) => {
     let total = 0
-    let c = getEditor({
+    let c = Factory.editor({
       editing: true,
       html: 'hi',
       preventLinebreaks: true,
