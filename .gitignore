@@ -2,3 +2,5 @@ test-bundle.js
 .DS_Store
 node_modules
 example/bundle.js
+# Process management from the foreman ruby gem.
+Procfile
