@@ -15,6 +15,10 @@ module.exports = function (config) {
       transform: ['babelify']
     },
 
+    client: {
+      captureConsole: true
+    },
+
     autoWatch: true
   });
 };
