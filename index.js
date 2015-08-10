@@ -6,13 +6,17 @@ var React = require('react')
 var classNames = require('classnames')
 var escapeHTML = require('escape-html')
 var isServer = typeof window === 'undefined'
+var supportsInput = false;
 
 if (!isServer) {
   var selectionRange = require('selection-range')
+
+  if ("oninput" in window) {
+    supportsInput = true;
+  }
 }
 
 var noop = function(){}
-
 
 /**
  * Make a contenteditable element
@@ -291,7 +295,7 @@ var ContentEditable = React.createClass({
   },
 
   onKeyUp: function(e) {
-    if (this.supportsInput) return
+    if (supportsInput) return
     if (this.stop) {
       this.stop = false
       return
@@ -312,7 +316,6 @@ var ContentEditable = React.createClass({
   },
 
   onInput: function(e) {
-    this.supportsInput = true
     var val = e.target.innerHTML
     var text = e.target.textContent.trim()
     if (!text) {
