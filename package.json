@@ -4,7 +4,8 @@
   "description": "enable limited interaction with a content editable element, useful for in-place, wysiwyg editing",
   "main": "index.js",
   "scripts": {
-    "test": "karma start"
+    "test": "karma start",
+    "e2e": "node_modules/nightwatch/bin/nightwatch --test __tests__/e2e/*"
   },
   "keywords": [
     "react",
@@ -39,6 +40,7 @@
     "karma-mocha-reporter": "^1.0.4",
     "karma-phantomjs-launcher": "^0.2.0",
     "lodash": "^3.10.1",
+    "nightwatch": "^0.7.9",
     "phantomjs": "^1.9.17",
     "react": "^0.13.0",
     "watchify": "^3.3.1"

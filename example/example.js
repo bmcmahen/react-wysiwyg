@@ -76,7 +76,7 @@ var Example = React.createClass({
           editing={this.state.editing}
         />
         <div className='controls'>
-          <div>
+          <div id="content-length">
             {this.state.maxLength - this.state.totalLength}
           </div>
           <button disabled={!isValid} onClick={this.enableEditing}>
