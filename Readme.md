@@ -2,9 +2,9 @@
 
 ![react-wysiwyg image](demo.gif)
 
-This component allows you to have input field like behaviour while using contenteditable. This is especially useful if you want to perform in-place, wysiwyg editing, or to implement something like Twitter's tweet-box, as seen in the above example.
+This component allows you to have some control over `contenteditable` content. It's especially useful for when you need to implement something that a `textarea` or `input` field can't provide -- i.e., something like Twitter's tweet-box that implements syntax highlighting, and auto-link creation, as seen in the above example. If you're looking for simple inline-editing, this module can work for that too, but I would suggest using traditional `input` fields where possible for improved cross-browser compatibility, and better accessibility.
 
-This module works well in the latest version of Chrome, Safari, Firefox, and iOS Safari. It mostly works in IE, thanks to a series of unfortunate hacks. Further testing for accessibility and browser support is required.
+This module works well in the latest version of Chrome, Safari, Firefox, and iOS Safari. It mostly works in IE, thanks to a series of unfortunate hacks. Further testing for accessibility and browser support is required, and other features need to be implemented, such as paragraph/newline support.
 
 It's worth looking at the supplied example to get a sense of how to use this module.
 
