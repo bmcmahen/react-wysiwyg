@@ -13,6 +13,7 @@ if (!isServer) {
 
 var noop = function(){};
 
+
 /**
  * Make a contenteditable element
  */
@@ -59,14 +60,17 @@ var ContentEditable = React.createClass({
       if (nextProps.html) {
         this._range = selectionRange(el);
       }
+      this.setCursorToEnd();
       return true;
     }
 
     if (nextProps.placeholder !== this.props.placeholder) {
+      this.setCursorToEnd();
       return true;
     }
 
     if (nextProps.editing !== this.props.editing) {
+      this.setCursorToEnd();
       return true;
     }
 
@@ -227,10 +231,6 @@ var ContentEditable = React.createClass({
       }
     }
 
-    // prevent linebreaks
-    if (this.props.noLinebreaks && (key === 13)) {
-      return prev();
-    }
 
     // placeholder behaviour
     if (this.contentIsEmpty(this.props.html)) { // If no text
@@ -250,16 +250,8 @@ var ContentEditable = React.createClass({
           prev();
           break;
 
-        case 13:
-          // 'Enter' key
-          prev();
-          if (this.props.onEnterKey) {
-            this.props.onEnterKey();
-          }
-          break;
-
-        case 27:
-          // 'Escape' key
+        case 13: // 'Enter' key
+        case 27: // 'Escape' key
           prev();
           if (this.props.onEscapeKey) {
             this.props.onEscapeKey();
@@ -272,11 +264,29 @@ var ContentEditable = React.createClass({
       }
     }
 
-    if (key === 27) {
-      prev();
-      if (this.props.onEscapeKey) {
-        this.props.onEscapeKey();
-      }
+    // handle case when content is not empty
+    switch (key) {
+      case 9:
+      case 13:
+        // prevent linebreaks
+        if (this.props.noLinebreaks) {
+          prev();
+          if (this.props.onEnterKey) {
+            this.props.onEnterKey(this.props.html);
+          }
+        }
+        break;
+
+      case 27:
+        // 'Escape' key
+        prev();
+        if (this.props.onEscapeKey) {
+          this.props.onEscapeKey();
+        }
+        break;
+
+      default:
+        break;
     }
   },
 
