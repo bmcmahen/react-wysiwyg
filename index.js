@@ -60,17 +60,14 @@ var ContentEditable = React.createClass({
       if (nextProps.html) {
         this._range = selectionRange(el);
       }
-      this.setCursorToEnd();
       return true;
     }
 
     if (nextProps.placeholder !== this.props.placeholder) {
-      this.setCursorToEnd();
       return true;
     }
 
     if (nextProps.editing !== this.props.editing) {
-      this.setCursorToEnd();
       return true;
     }
 
