@@ -131,7 +131,7 @@ var ContentEditable = React.createClass({
       onMouseDown: this.onMouseDown,
       'aria-label': this.props.placeholderText,
       onTouchStart: this.onMouseDown,
-      style: this.props.placeholder ? placeholderStyle : {},
+      style: this.props.placeholder ? placeholderStyle : this.props.style || {},
       onKeyPress: this.onKeyPress,
       onInput: this.onInput,
       onKeyUp: this.onKeyUp,
