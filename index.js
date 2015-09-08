@@ -2,16 +2,17 @@
  * Module dependencies
  */
 
-var React = require('react')
-var classNames = require('classnames')
-var escapeHTML = require('escape-html')
-var isServer = typeof window === 'undefined'
+var React = require('react');
+var classNames = require('classnames');
+var escapeHTML = require('escape-html');
+var isServer = typeof window === 'undefined';
 
 if (!isServer) {
-  var selectionRange = require('selection-range')
+  var selectionRange = require('selection-range');
 }
 
-var noop = function(){}
+var noop = function(){};
+
 
 /**
  * Make a contenteditable element
@@ -54,41 +55,41 @@ var ContentEditable = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps) {
-    var el = React.findDOMNode(this)
+    var el = React.findDOMNode(this);
     if (nextProps.html !== el.innerHTML) {
       if (nextProps.html) {
-        this._range = selectionRange(el)
+        this._range = selectionRange(el);
       }
-      return true
+      return true;
     }
 
     if (nextProps.placeholder !== this.props.placeholder) {
-      return true
+      return true;
     }
 
     if (nextProps.editing !== this.props.editing) {
-      return true
+      return true;
     }
 
-    return false
+    return false;
   },
 
   componentWillReceiveProps: function (nextProps) {
     if (!this.props.editing && nextProps.editing) {
       if (this.contentIsEmpty(nextProps.html)) {
-        this.props.onChange('', true)
+        this.props.onChange('', true);
       }
     }
   },
 
   componentDidUpdate: function() {
     if (!this.props.editing && !this.props.html) {
-      this.props.onChange('')
+      this.props.onChange('');
     }
 
     if (this._range) {
-      selectionRange(React.findDOMNode(this), this._range)
-      delete this._range
+      selectionRange(React.findDOMNode(this), this._range);
+      delete this._range;
     }
   },
 
@@ -110,7 +111,7 @@ var ContentEditable = React.createClass({
 
     var placeholderStyle = this.props.placeholderStyle || {
       color: '#bbbbbb'
-    }
+    };
 
     if (className) {
       classes[className] = true;
@@ -136,13 +137,13 @@ var ContentEditable = React.createClass({
       onInput: this.onInput,
       onKeyUp: this.onKeyUp,
       dangerouslySetInnerHTML: {
-        __html : this.props.placeholder ? this.props.placeholderText : content
+        __html: this.props.placeholder ? this.props.placeholderText : content
       }
     });
   },
 
   unsetPlaceholder: function(){
-    this.props.onChange('', false, '')
+    this.props.onChange('', false, '');
   },
 
   setCursorToStart: function(){
@@ -156,54 +157,54 @@ var ContentEditable = React.createClass({
   },
 
   setCursorToEnd: function() {
-    var el = React.findDOMNode(this)
-    el.focus()
-    var range = document.createRange()
-    range.selectNodeContents(el)
-    range.collapse(false)
-    var sel = window.getSelection()
-    sel.removeAllRanges()
-    sel.addRange(range)
+    var el = React.findDOMNode(this);
+    el.focus();
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
   },
 
   contentIsEmpty: function (content) {
 
     if (this.state.placeholder) {
-      return true
+      return true;
     }
 
     if (!content) {
-      return true
+      return true;
     }
 
     if (content === '<br />') {
-      return true
+      return true;
     }
 
     if (!content.trim().length) {
-      return true
+      return true;
     }
 
-    return false
+    return false;
   },
 
 
   onMouseDown: function(e) {
     // prevent cursor placement if placeholder is set
     if (this.contentIsEmpty(this.props.html)) {
-      this.setCursorToStart()
-      e.preventDefault()
+      this.setCursorToStart();
+      e.preventDefault();
     }
   },
 
   onKeyDown: function(e) {
-    var self = this
-    this.props.onKeyDown(e)
+    var self = this;
+    this.props.onKeyDown(e);
 
     function prev () {
       e.preventDefault();
       e.stopPropagation();
-      self.stop = true
+      self.stop = true;
     }
 
     var key = e.keyCode;
@@ -213,30 +214,26 @@ var ContentEditable = React.createClass({
 
       // bold
       if (key === 66) {
-        this.props.onBold(e)
+        this.props.onBold(e);
         if (this.props.preventStyling) {
-          return prev()
+          return prev();
         }
 
       // italic
       } else if (key === 73) {
-        this.props.onItalic(e)
+        this.props.onItalic(e);
         if (this.props.preventStyling) {
-          return prev()
+          return prev();
         }
       }
     }
 
-    // prevent linebreaks
-    if (this.props.noLinebreaks && (key === 13)) {
-      return prev()
-    }
 
     // placeholder behaviour
     if (this.contentIsEmpty(this.props.html)) { // If no text
 
       if (e.metaKey || (e.shiftKey && (key === 16))) {
-        return prev()
+        return prev();
       }
 
       switch (key) {
@@ -250,16 +247,8 @@ var ContentEditable = React.createClass({
           prev();
           break;
 
-        case 13:
-          // 'Enter' key
-          prev();
-          if (this.props.onEnterKey) {
-            this.props.onEnterKey();
-          }
-          break;
-
-        case 27:
-          // 'Escape' key
+        case 13: // 'Enter' key
+        case 27: // 'Escape' key
           prev();
           if (this.props.onEscapeKey) {
             this.props.onEscapeKey();
@@ -271,55 +260,82 @@ var ContentEditable = React.createClass({
           break;
       }
     }
+
+    // handle case when content is not empty
+    switch (key) {
+      case 9:
+      case 13:
+        // prevent linebreaks
+        if (this.props.noLinebreaks) {
+          prev();
+          if (this.props.onEnterKey) {
+            this.props.onEnterKey(this.props.html);
+          }
+        }
+        break;
+
+      case 27:
+        // 'Escape' key
+        prev();
+        if (this.props.onEscapeKey) {
+          this.props.onEscapeKey();
+        }
+        break;
+
+      default:
+        break;
+    }
   },
 
   onPaste: function(e){
     // handle paste manually to ensure we unset our placeholder
     e.preventDefault();
-    var data = e.clipboardData.getData('text/plain')
-    this.props.onChange(escapeHTML(data), false, data)
+    var data = e.clipboardData.getData('text/plain');
+    this.props.onChange(escapeHTML(data), false, data);
     // a bit hacky. set cursor to end of contents
     // after the paste, which is async
     setTimeout(function(){
-      this.setCursorToEnd()
-    }.bind(this), 0)
+      this.setCursorToEnd();
+    }.bind(this), 0);
   },
 
   onKeyPress: function(e){
-    this.props.onKeyPress(e)
+    this.props.onKeyPress(e);
   },
 
   onKeyUp: function(e) {
-    if (this._supportsInput) return
+    if (this.supportsInput) {
+      return;
+    }
     if (this.stop) {
-      this.stop = false
-      return
+      this.stop = false;
+      return;
     }
 
-    var target = React.findDOMNode(this)
-    var self = this
+    var target = React.findDOMNode(this);
+    var self = this;
 
     if (!target.textContent.trim().length) {
-      this.props.onChange('', true, '')
+      this.props.onChange('', true, '');
       setTimeout(function(){
-        self.setCursorToStart()
-      }, 1)
+        self.setCursorToStart();
+      }, 1);
     } else {
-      this.props.onChange(target.textContent, false, target.innerHTML)
+      this.props.onChange(target.textContent, false, target.innerHTML);
     }
 
   },
 
   onInput: function(e) {
-    this._supportsInput = true
-    var val = e.target.innerHTML
-    var text = e.target.textContent.trim()
+    this.supportsInput = true;
+    var val = e.target.innerHTML;
+    var text = e.target.textContent.trim();
     if (!text) {
-      this.props.onChange('', true, '')
-      return
+      this.props.onChange('', true, '');
+      return;
     }
 
-    this.props.onChange(escapeHTML(e.target.textContent), false, e.target.innerHTML)
+    this.props.onChange(escapeHTML(e.target.textContent), false, e.target.innerHTML);
   }
 
 });
