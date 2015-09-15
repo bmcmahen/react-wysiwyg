@@ -56,7 +56,7 @@ var ContentEditable = React.createClass({
   shouldComponentUpdate: function(nextProps) {
     var el = React.findDOMNode(this)
     if (nextProps.html !== el.innerHTML) {
-      if (nextProps.html) {
+      if (nextProps.html && document.activeElement === el) {
         this._range = selectionRange(el)
       }
       return true
