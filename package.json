@@ -1,6 +1,6 @@
 {
   "name": "react-wysiwyg",
-  "version": "2.0.4",
+  "version": "2.0.6",
   "description": "enable limited interaction with a content editable element, useful for in-place, wysiwyg editing",
   "main": "index.js",
   "scripts": {
@@ -13,9 +13,6 @@
     "textarea",
     "forms"
   ],
-  "peerDependencies": {
-    "react": ">=0.12.0"
-  },
   "author": "Ben McMahen",
   "license": "MIT",
   "repository": {
