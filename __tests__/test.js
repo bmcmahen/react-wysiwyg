@@ -242,12 +242,12 @@ describe('Editable', function() {
         html: 'hi john',
         placeholder: false,
         onChange: function(v, setplaceholder, html) {
-          expect(v).toEqual('hi merry john');
+          expect(v).toEqual('hi <em>merry</em> john');
           var selection = window.getSelection();
           var range = selection.getRangeAt(0);
           expect(range.startContainer).toEqual(range.endContainer);
           expect(range.startOffset).toEqual(range.endOffset);
-          expect(charactersBeforeRange(range)).toEqual('hi merry');
+          expect(charactersBeforeRange(range)).toEqual('hi <em>merry</em>');
           next();
         }
       })
@@ -259,7 +259,7 @@ describe('Editable', function() {
       range.collapse(true);
       setCurrentRange(range);
 
-      Test.Simulate.paste(el, { clipboardData: { getData: () => ' merry' } })
+      Test.Simulate.paste(el, { clipboardData: { getData: () => ' <em>merry</em>' } })
     })
 
     it('should replace selection when pasting', (next) => {

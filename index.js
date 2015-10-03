@@ -266,7 +266,8 @@ var ContentEditable = React.createClass({
     var selection = window.getSelection();
     var range = selection.getRangeAt(0);
     range.deleteContents();
-    var fragment = range.createContextualFragment(data)
+    var fragment = range.createContextualFragment('');
+    fragment.textContent = data;
     var replacementEnd = fragment.lastChild;
     range.insertNode(fragment);
     // Set cursor at the end of the replaced content, just like browsers do.
