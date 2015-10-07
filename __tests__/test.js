@@ -4,7 +4,7 @@ var Test = React.addons.TestUtils
 var expect = require('expect')
 var Factory = require('./factories');
 
-describe('Editable', () => {
+describe('Editable', function() {
 
   function getEl(component) {
     return React.findDOMNode(component)
@@ -212,4 +212,80 @@ describe('Editable', () => {
     }, 10)
   })
 
+  describe('pasting based on cursor position', () => {
+    beforeEach(() => {
+      // focus and cursor selection require dom nodes that are attached to the document.
+      this.container = document.createElement('div')
+      document.body.appendChild(this.container)
+    })
+
+    afterEach(() => {
+      React.unmountComponentAtNode(this.container);
+      document.body.removeChild(this.container)
+    })
+
+    function setCurrentRange(range) {
+      let selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    function charactersBeforeRange(range) {
+      return Array.prototype.slice.call(range.startContainer.childNodes, 0, range.startOffset)
+        .map((node) => node.textContent)
+        .join('')
+    }
+
+    it('should paste at the cursor', (next) => {
+      let reactElement = Factory.editorElement({
+        editing: true,
+        html: 'hi john',
+        placeholder: false,
+        onChange: function(v, setplaceholder, html) {
+          expect(v).toEqual('hi <em>merry</em> john');
+          var selection = window.getSelection();
+          var range = selection.getRangeAt(0);
+          expect(range.startContainer).toEqual(range.endContainer);
+          expect(range.startOffset).toEqual(range.endOffset);
+          expect(charactersBeforeRange(range)).toEqual('hi <em>merry</em>');
+          next();
+        }
+      })
+      let c = React.render(reactElement, this.container);
+
+      let el = getEl(c)
+      let range = document.createRange();
+      range.setStart(el.childNodes[0], 2);
+      range.collapse(true);
+      setCurrentRange(range);
+
+      Test.Simulate.paste(el, { clipboardData: { getData: () => ' <em>merry</em>' } })
+    })
+
+    it('should replace selection when pasting', (next) => {
+      let reactElement = Factory.editorElement({
+        editing: true,
+        html: 'dab',
+        placeholder: false,
+        onChange: function(v, setplaceholder, html) {
+          expect(v).toEqual('doorknob');
+          var selection = window.getSelection();
+          var range = selection.getRangeAt(0);
+          expect(range.startContainer).toEqual(range.endContainer);
+          expect(range.startOffset).toEqual(range.endOffset);
+          expect(charactersBeforeRange(range)).toEqual('doorkno');
+          next();
+        }
+      })
+      let c = React.render(reactElement, this.container);
+
+      let el = getEl(c)
+      let range = document.createRange();
+      range.setStart(el.childNodes[0], 1);
+      range.setEnd(el.childNodes[0], 2);
+      setCurrentRange(range);
+
+      Test.Simulate.paste(el, { clipboardData: { getData: () => 'oorkno' } })
+    })
+  })
 })

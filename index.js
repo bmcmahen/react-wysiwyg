@@ -155,17 +155,6 @@ var ContentEditable = React.createClass({
     sel.addRange(range);
   },
 
-  setCursorToEnd: function() {
-    var el = React.findDOMNode(this)
-    el.focus()
-    var range = document.createRange()
-    range.selectNodeContents(el)
-    range.collapse(false)
-    var sel = window.getSelection()
-    sel.removeAllRanges()
-    sel.addRange(range)
-  },
-
   contentIsEmpty: function (content) {
 
     if (this.state.placeholder) {
@@ -273,16 +262,28 @@ var ContentEditable = React.createClass({
     }
   },
 
+  _replaceCurrentSelection: function(data) {
+    var selection = window.getSelection();
+    var range = selection.getRangeAt(0);
+    range.deleteContents();
+    var fragment = range.createContextualFragment('');
+    fragment.textContent = data;
+    var replacementEnd = fragment.lastChild;
+    range.insertNode(fragment);
+    // Set cursor at the end of the replaced content, just like browsers do.
+    range.setStartAfter(replacementEnd);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  },
+
   onPaste: function(e){
     // handle paste manually to ensure we unset our placeholder
     e.preventDefault();
     var data = e.clipboardData.getData('text/plain')
-    this.props.onChange(escapeHTML(data), false, data)
-    // a bit hacky. set cursor to end of contents
-    // after the paste, which is async
-    setTimeout(function(){
-      this.setCursorToEnd()
-    }.bind(this), 0)
+    this._replaceCurrentSelection(data);
+    var target = React.findDOMNode(this)
+    this.props.onChange(target.textContent, false, target.innerHTML)
   },
 
   onKeyPress: function(e){

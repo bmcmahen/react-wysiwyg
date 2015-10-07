@@ -4,7 +4,7 @@ var Test = React.addons.TestUtils
 var Edit = require('../')
 
 module.exports = {
-  editor(args = {}) {
+  editorElement(args) {
     let props = _.assign({
       editing: true,
       html: 'hi',
@@ -13,6 +13,10 @@ module.exports = {
       placeholderText: 'placeholder'
     }, args)
 
-    return Test.renderIntoDocument(<Edit {...props} />)
+    return <Edit {...props} />
+  },
+
+  editor(args = {}) {
+    return Test.renderIntoDocument(this.editorElement(args))
   }
 };
