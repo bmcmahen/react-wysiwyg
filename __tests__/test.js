@@ -187,6 +187,21 @@ describe('Editable', function() {
     Test.Simulate.blur(el)
   })
 
+  it('should emit events for focus', (next) => {
+    let c = Factory.editor({
+      preventStyling: true,
+      editing: true,
+      html: 'hi',
+      onFocus: function(){
+        next()
+      },
+      placeholder: false
+    })
+
+    let el = getEl(c)
+    Test.Simulate.focus(el)
+  })
+
   it('should work using keyUp as well, as a fallback', (next) => {
     let total = 0
     let c = Factory.editor({
