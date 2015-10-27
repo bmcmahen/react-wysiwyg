@@ -170,6 +170,38 @@ describe('Editable', function() {
     Test.Simulate.keyDown(el, { metaKey: true, keyCode: 73 })
   })
 
+  it('should emit events for blur', (next) => {
+    let c = Factory.editor({
+      preventStyling: true,
+      editing: true,
+      html: 'hi',
+      onBlur: function(){
+        next()
+      },
+      placeholder: false
+    })
+
+    let el = getEl(c)
+    Test.Simulate.focus(el)
+    Test.Simulate.input(el, { key: 'b' })
+    Test.Simulate.blur(el)
+  })
+
+  it('should emit events for focus', (next) => {
+    let c = Factory.editor({
+      preventStyling: true,
+      editing: true,
+      html: 'hi',
+      onFocus: function(){
+        next()
+      },
+      placeholder: false
+    })
+
+    let el = getEl(c)
+    Test.Simulate.focus(el)
+  })
+
   it('should work using keyUp as well, as a fallback', (next) => {
     let total = 0
     let c = Factory.editor({
@@ -287,5 +319,6 @@ describe('Editable', function() {
 
       Test.Simulate.paste(el, { clipboardData: { getData: () => 'oorkno' } })
     })
+
   })
 })

@@ -30,6 +30,8 @@ var ContentEditable = React.createClass({
     onEscapeKey: React.PropTypes.func,
     preventStyling: React.PropTypes.bool,
     noLinebreaks: React.PropTypes.bool,
+    onBlur: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
     onBold: React.PropTypes.func,
     onItalic: React.PropTypes.func,
     onKeyDown: React.PropTypes.func,
@@ -126,6 +128,8 @@ var ContentEditable = React.createClass({
       tabIndex: 0,
       className: classNames(classes),
       contentEditable: editing,
+      onBlur: this.onBlur,
+      onFocus: this.onFocus,
       onKeyDown: this.onKeyDown,
       onPaste: this.onPaste,
       onMouseDown: this.onMouseDown,
@@ -321,6 +325,18 @@ var ContentEditable = React.createClass({
     }
 
     this.props.onChange(escapeHTML(e.target.textContent), false, e.target.innerHTML)
+  },
+
+  onBlur: function(e) {
+      if (this.props.onBlur) {
+          this.props.onBlur(e);
+      }
+  },
+
+  onFocus: function(e) {
+      if (this.props.onFocus) {
+          this.props.onFocus(e);
+      }
   }
 
 });
