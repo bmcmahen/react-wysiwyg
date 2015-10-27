@@ -217,6 +217,9 @@ var ContentEditable = React.createClass({
         if (this.props.preventStyling) {
           return prev()
         }
+      //paste
+      } else if (key === 86) {
+        return;
       }
     }
 
