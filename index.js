@@ -3,6 +3,7 @@
  */
 
 var React = require('react')
+var ReactDOM = require('react-dom')
 var classNames = require('classnames')
 var escapeHTML = require('escape-html')
 var isServer = typeof window === 'undefined'
@@ -56,7 +57,7 @@ var ContentEditable = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps) {
-    var el = React.findDOMNode(this)
+    var el = ReactDOM.findDOMNode(this)
     if (nextProps.html !== el.innerHTML) {
       if (nextProps.html && document.activeElement === el) {
         this._range = selectionRange(el)
@@ -89,13 +90,13 @@ var ContentEditable = React.createClass({
     }
 
     if (this._range) {
-      selectionRange(React.findDOMNode(this), this._range)
+      selectionRange(ReactDOM.findDOMNode(this), this._range)
       delete this._range
     }
   },
 
   autofocus: function(){
-    React.findDOMNode(this).focus();
+    ReactDOM.findDOMNode(this).focus();
   },
 
   render: function() {
@@ -126,6 +127,7 @@ var ContentEditable = React.createClass({
     // return our newly created element
     return React.createElement(tagName, {
       tabIndex: 0,
+      key: '0',
       className: classNames(classes),
       contentEditable: editing,
       onBlur: this.onBlur,
@@ -150,10 +152,10 @@ var ContentEditable = React.createClass({
   },
 
   setCursorToStart: function(){
-    React.findDOMNode(this).focus();
+    ReactDOM.findDOMNode(this).focus();
     var sel = window.getSelection();
     var range = document.createRange();
-    range.setStart(React.findDOMNode(this), 0);
+    range.setStart(ReactDOM.findDOMNode(this), 0);
     range.collapse(true);
     sel.removeAllRanges();
     sel.addRange(range);
@@ -289,7 +291,7 @@ var ContentEditable = React.createClass({
     e.preventDefault();
     var data = e.clipboardData.getData('text/plain')
     this._replaceCurrentSelection(data);
-    var target = React.findDOMNode(this)
+    var target = ReactDOM.findDOMNode(this)
     this.props.onChange(target.textContent, false, target.innerHTML)
   },
 
@@ -304,7 +306,7 @@ var ContentEditable = React.createClass({
       return
     }
 
-    var target = React.findDOMNode(this)
+    var target = ReactDOM.findDOMNode(this)
     var self = this
 
     if (!target.textContent.trim().length) {
