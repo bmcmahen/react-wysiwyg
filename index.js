@@ -290,7 +290,7 @@ var ContentEditable = React.createClass({
     var data = e.clipboardData.getData('text/plain')
     this._replaceCurrentSelection(data);
     var target = React.findDOMNode(this)
-    this.props.onChange(target.textContent, false, target.innerHTML)
+    this.props.onChange(target.textContent, false, target)
   },
 
   onKeyPress: function(e){
@@ -313,7 +313,7 @@ var ContentEditable = React.createClass({
         self.setCursorToStart()
       }, 1)
     } else {
-      this.props.onChange(target.textContent, false, target.innerHTML)
+      this.props.onChange(target.textContent, false, target)
     }
 
   },
@@ -327,7 +327,7 @@ var ContentEditable = React.createClass({
       return
     }
 
-    this.props.onChange(escapeHTML(e.target.textContent), false, e.target.innerHTML)
+    this.props.onChange(escapeHTML(e.target.textContent), false, e.target)
   },
 
   onBlur: function(e) {

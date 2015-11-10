@@ -108,7 +108,7 @@ describe('Editable', function() {
       editing: true,
       html: 'hi',
       placeholder: false,
-      onChange: function(v, setplaceholder, html) {
+      onChange: function(v, setplaceholder, target) {
         if (total === 3) {
           next()
         }
@@ -208,7 +208,7 @@ describe('Editable', function() {
       editing: true,
       html: 'hi',
       placeholder: false,
-      onChange: function(v, setplaceholder, html) {
+      onChange: function(v, setplaceholder, target) {
         if (total === 3) {
           next()
         }
@@ -231,7 +231,7 @@ describe('Editable', function() {
       html: 'hi',
       preventLinebreaks: true,
       placeholder: false,
-      onChange: function(v, setplaceholder, html) {
+      onChange: function(v, setplaceholder, target) {
         next(new Error('i wrongly emitted a change event'))
       }
     })
@@ -273,7 +273,7 @@ describe('Editable', function() {
         editing: true,
         html: 'hi john',
         placeholder: false,
-        onChange: function(v, setplaceholder, html) {
+        onChange: function(v, setplaceholder, target) {
           expect(v).toEqual('hi <em>merry</em> john');
           var selection = window.getSelection();
           var range = selection.getRangeAt(0);
@@ -299,7 +299,7 @@ describe('Editable', function() {
         editing: true,
         html: 'dab',
         placeholder: false,
-        onChange: function(v, setplaceholder, html) {
+        onChange: function(v, setplaceholder, target) {
           expect(v).toEqual('doorknob');
           var selection = window.getSelection();
           var range = selection.getRangeAt(0);

@@ -97,7 +97,7 @@ var Example = React.createClass({
     }
   },
 
-  onChange: function(text, setPlaceholder) {
+  onChange: function(text, setPlaceholder, target) {
     // in order to render the updated html,
     // you need to pass it as a prop to contentEditable.
     // This gives you increased flexibility.
@@ -109,8 +109,11 @@ var Example = React.createClass({
       })
     } else {
 
-      var copy = text.slice(0, this.state.maxLength)
+      text = target.textContent || ''
+      var copy = text.slice(0, this.state.maxLength);
+      var output = escapeHTML(copy);
 
+      /* TODO: fix this entire part
       // mutations
       // @name
       var regex = /(^|[^@\w])@(\w{1,15})\b/g
@@ -119,11 +122,12 @@ var Example = React.createClass({
 
       // #hash
       output = output.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, '$1<span class="show-dropdown" style="color: #aaa;">$2</span>')
+      */
 
       // text overflow
       if (text.length > this.state.maxLength) {
         var overflow = '<span style="color: #bbb; background-color: #eee; text-decoration: line-through;">' +
-          text.slice(this.state.maxLength) +
+          escapeHTML(text.slice(this.state.maxLength)) +
           '</span>'
         output = output + overflow
       }
