@@ -204,7 +204,7 @@ var ContentEditable = React.createClass({
     var key = e.keyCode;
 
     // bold & italic styling
-    if (e.metaKey) {
+    if (e.metaKey || e.ctrlKey) {
 
       // bold
       if (key === 66) {
@@ -233,7 +233,7 @@ var ContentEditable = React.createClass({
     // placeholder behaviour
     if (this.contentIsEmpty(this.props.html)) { // If no text
 
-      if (e.metaKey || (e.shiftKey && (key === 16))) {
+      if (e.metaKey || e.ctrlKey || (e.shiftKey && (key === 16))) {
         return prev()
       }
 
