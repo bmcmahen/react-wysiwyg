@@ -1,0 +1,143 @@
+{
+  "name": "bmcmahen/react-wysiwyg",
+  "version": "0.1.4",
+  "libraries": {
+    "xv": "^1.1.25"
+  },
+  "title": "",
+  "branch": "",
+  "style": {
+    "name": "Default",
+    "componentSet": {
+      "nav": "nav/BasicNav",
+      "header": "header/BannerHeader",
+      "article": "article/BasicArticle",
+      "footer": "footer/BasicFooter"
+    },
+    "fontFamily": "-apple-system, BlinkMacSystemFont, sans-serif",
+    "fontWeight": 400,
+    "bold": 600,
+    "lineHeight": 1.5,
+    "typeScale": [
+      72,
+      48,
+      24,
+      20,
+      16,
+      14,
+      12
+    ],
+    "monospace": "Menlo, monospace",
+    "heading": {
+      "fontFamily": null,
+      "fontStyle": null,
+      "fontWeight": 600,
+      "lineHeight": 1.25,
+      "textTransform": null,
+      "letterSpacing": null
+    },
+    "h0": {},
+    "h1": {},
+    "h2": {},
+    "h3": {},
+    "h4": {},
+    "h5": {},
+    "h6": {},
+    "alternativeText": {},
+    "space": [
+      0,
+      8,
+      16,
+      32,
+      48,
+      64,
+      96
+    ],
+    "layout": {
+      "maxWidth": 1024,
+      "centered": false
+    },
+    "colors": {
+      "text": "#111",
+      "background": "#fff",
+      "primary": "#08e",
+      "secondary": "#059",
+      "highlight": "#e08",
+      "border": "#ddd",
+      "muted": "#eee"
+    },
+    "border": {
+      "width": 1,
+      "radius": 2
+    },
+    "link": {},
+    "button": {
+      "hover": {
+        "boxShadow": "inset 0 0 0 999px rgba(0, 0, 0, .125)"
+      }
+    },
+    "input": {},
+    "body": {
+      "margin": 0
+    },
+    "breakpoints": {
+      "xs": "@media screen and (max-width:40em)",
+      "sm": "@media screen and (min-width:40em)",
+      "md": "@media screen and (min-width:52em)",
+      "lg": "@media screen and (min-width:64em)"
+    }
+  },
+  "content": [
+    {
+      "component": "nav",
+      "links": [
+        {
+          "href": "https://github.com/bmcmahen/react-wysiwyg",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://npmjs.com/package/react-wysiwyg",
+          "text": "npm"
+        }
+      ]
+    },
+    {
+      "component": "header",
+      "heading": "react-wysiwyg",
+      "subhead": "retain some control over contenteditable input",
+      "children": [
+        {
+          "component": "ui/TweetButton",
+          "text": "react-wysiwyg: retain some control over contenteditable input",
+          "url": ""
+        },
+        {
+          "component": "ui/GithubButton",
+          "user": "bmcmahen",
+          "repo": "react-wysiwyg"
+        }
+      ],
+      "text": "v2.2.1"
+    },
+    {
+      "component": "article",
+      "metadata": {
+        "source": "github.readme"
+      },
+      "html": "\n<p><img src=\"demo.gif\"></p>\n<p>This component allows you to have some control over <code>contenteditable</code> content. It&apos;s especially useful for when you need to implement something that a <code>textarea</code> or <code>input</code> field can&apos;t provide -- i.e., something like Twitter&apos;s tweet-box that implements syntax highlighting, and auto-link creation, as seen in the above example. If you&apos;re looking for simple inline-editing, this module can work for that too, but I would suggest using traditional <code>input</code> fields where possible for improved cross-browser compatibility, and better accessibility.</p>\n<p>This module works well in the latest version of Chrome, Safari, Firefox, and iOS Safari. It mostly works in IE, thanks to a series of unfortunate hacks. Further testing for accessibility and browser support is required, and other features need to be implemented, such as paragraph/newline support.</p>\n<p>It&apos;s worth looking at the supplied example to get a sense of how to use this module.</p>\n<h2>Install</h2>\n<pre>$ npm <span class=\"hljs-keyword\">install</span> react-wysiwyg</pre><h2>Run the example</h2>\n<pre><span class=\"hljs-symbol\">$</span> git clone https:<span class=\"hljs-comment\">//github.com/bmcmahen/react-wysiwyg.git &amp;&amp; cd react-wysiwyg</span>\n<span class=\"hljs-symbol\">$</span> npm install\n<span class=\"hljs-symbol\">$</span> make build\n<span class=\"hljs-symbol\">$</span> make example</pre><h2>Usage</h2>\n<pre><span class=\"hljs-keyword\">var</span> ContentEditable = <span class=\"hljs-built_in\">require</span>(<span class=\"hljs-string\">&apos;react-wysiwyg&apos;</span>);\n\n<span class=\"hljs-keyword\">var</span> Example = React.createClass({\n\n  <span class=\"hljs-attr\">getInitialState</span>: <span class=\"hljs-function\"><span class=\"hljs-keyword\">function</span>(<span class=\"hljs-params\"></span>)</span>{\n    <span class=\"hljs-keyword\">return</span> {\n      <span class=\"hljs-attr\">html</span>: <span class=\"hljs-string\">&apos;default text&apos;</span>,\n      <span class=\"hljs-attr\">placeholder</span>: <span class=\"hljs-literal\">false</span>,\n      <span class=\"hljs-attr\">editing</span>: <span class=\"hljs-literal\">false</span>\n    }\n  },\n\n  <span class=\"hljs-attr\">render</span>: <span class=\"hljs-function\"><span class=\"hljs-keyword\">function</span>(<span class=\"hljs-params\"></span>)</span>{\n    <span class=\"hljs-keyword\">return</span> (\n      <span class=\"xml\"><span class=\"hljs-tag\">&lt;<span class=\"hljs-name\">div</span>&gt;</span>\n        <span class=\"hljs-tag\">&lt;<span class=\"hljs-name\">ContentEditable</span>\n          <span class=\"hljs-attr\">tagName</span>=<span class=\"hljs-string\">&apos;div&apos;</span>\n          <span class=\"hljs-attr\">onChange</span>=<span class=\"hljs-string\">{this.onChange}</span>\n          <span class=\"hljs-attr\">html</span>=<span class=\"hljs-string\">{this.state.html}</span>\n          <span class=\"hljs-attr\">preventStyling</span>\n          <span class=\"hljs-attr\">noLinebreaks</span>\n          <span class=\"hljs-attr\">placeholder</span>=<span class=\"hljs-string\">{this.state.placeholder}</span>\n          <span class=\"hljs-attr\">placeholderText</span>=<span class=\"hljs-string\">&apos;Your Name&apos;</span>\n          <span class=\"hljs-attr\">editing</span>=<span class=\"hljs-string\">{this.state.editing}</span>\n        /&gt;</span>\n        <span class=\"hljs-tag\">&lt;<span class=\"hljs-name\">button</span> <span class=\"hljs-attr\">onClick</span>=<span class=\"hljs-string\">{this.enableEditing}</span>&gt;</span>\n          Enable Editing\n        <span class=\"hljs-tag\">&lt;/<span class=\"hljs-name\">button</span>&gt;</span>\n      <span class=\"hljs-tag\">&lt;/<span class=\"hljs-name\">div</span>&gt;</span>\n    );\n  },\n\n  onChange: function(textContent, setPlaceholder) {\n    if (setPlaceholder) {\n      this.setState({\n        placeholder: true,\n        html: &apos;&apos;\n      })\n    } else {\n      this.setState({\n        placeholder: false,\n        html: textContent\n      })\n    }\n  },\n\n  enableEditing: function(){\n    // set your contenteditable field into editing mode.\n    this.setState({ editing: true });\n  }\n\n});</span></pre><h2>Tests</h2>\n<pre>make <span class=\"hljs-built_in\">test</span></pre>"
+    },
+    {
+      "component": "footer",
+      "links": [
+        {
+          "href": "https://github.com/bmcmahen/react-wysiwyg",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://github.com/bmcmahen",
+          "text": "bmcmahen"
+        }
+      ]
+    }
+  ]
+}
